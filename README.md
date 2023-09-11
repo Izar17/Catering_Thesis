@@ -1,10 +1,10 @@
 Caserole
 
-1. - Composer Install
-2. - Run the 'npm install' command (and only in case you face any issues/errors, run the 'npm audit fix' command), and then run the 'npm run build' command.
-3. - cp .env.example
-4. - php artisan config:clear
-5. - php artisan serve
+1. Composer Install
+2. Run the 'npm install' command (and only in case you face any issues/errors, run the 'npm audit fix' command), and then run the 'npm run build' command.
+3. cp .env.example
+4. php artisan config:clear
+5. php artisan serve
 
 Database
 1. Create Database caserole_db
