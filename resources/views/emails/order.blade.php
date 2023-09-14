@@ -11,7 +11,7 @@
     <body>
         <table style="width: 700px">
             <tr><td>&nbsp;</td></tr>
-            <tr><td><img src="{{ asset('front/images/main-logo/main-logo.png') }}"></td></tr>
+            <tr><td><img src="{{ asset('front/images/main-logo/caserole_logo.png') }}"></td></tr>
             <tr><td>&nbsp;</td></tr>
             <tr><td>Hello {{ $name }}</td></tr>
             <tr><td>&nbsp;<br></td></tr>
@@ -101,7 +101,7 @@
             </tr>
 
             <tr><td>&nbsp;</td></tr>
-            <tr><td>For any queries, you can contact us at <a href="mailto:info@MultiVendorEcommerceApplication.com.eg">info@MultiVendorEcommerceApplication.com.eg</a></td></tr>
+            <tr><td>For any queries, you can contact us at <a href="mailto:info@Caserole">info@Caserole</a></td></tr>
             <tr><td>&nbsp;</td></tr>
             <tr><td>Regards,<br>Team CASEROLE</td></tr>
             <tr><td>&nbsp;</td></tr>

@@ -1124,13 +1124,13 @@ class ProductsController extends Controller
                 ];
 
                 \Illuminate\Support\Facades\Mail::send('emails.order', $messageData, function ($message) use ($email) { // Sending Mail: https://laravel.com/docs/9.x/mail#sending-mail    // 'emails.order' is the order.blade.php file inside the 'resources/views/emails' folder that will be sent as an email    // We pass in all the variables that order.blade.php will use    // https://www.php.net/manual/en/functions.anonymous.php
-                    $message->to($email)->subject('Order Placed - MultiVendorEcommerceApplication.com.eg');
+                    $message->to($email)->subject('Order Placed - Caserole');
                 });
 
                 /*
                 // Sending the Order confirmation SMS
                 // Send an SMS using an SMS API and cURL
-                $message = 'Dear Customer, your order ' . $order_id . ' has been placed successfully with MultiVendorEcommerceApplication.com.eg. We will inform you once your order is shipped';
+                $message = 'Dear Customer, your order ' . $order_id . ' has been placed successfully with Caserole. We will inform you once your order is shipped';
                 // $mobile = $data['mobile']; // the user's mobile that they entered while submitting the registration form
                 $mobile = Auth::user()->moblie; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
                 \App\Models\Sms::sendSms($message, $mobile); // Send the SMS

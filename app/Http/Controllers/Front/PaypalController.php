@@ -1,7 +1,7 @@
 <?php
 
 
-// Using Omnipay PayPal package    "composer require league/omnipay omnipay/paypal"    :https://github.com/thephpleague/omnipay-paypal.    // https://github.com/thephpleague/omnipay    
+// Using Omnipay PayPal package    "composer require league/omnipay omnipay/paypal"    :https://github.com/thephpleague/omnipay-paypal.    // https://github.com/thephpleague/omnipay
 namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class PaypalController extends Controller
 
 
 
-    // Using Omnipay PayPal package    "composer require league/omnipay omnipay/paypal"    :https://github.com/thephpleague/omnipay-paypal.    // https://omnipay.thephpleague.com/simple-example    // https://github.com/thephpleague/omnipay    
+    // Using Omnipay PayPal package    "composer require league/omnipay omnipay/paypal"    :https://github.com/thephpleague/omnipay-paypal.    // https://omnipay.thephpleague.com/simple-example    // https://github.com/thephpleague/omnipay
     private $gateway; // $gateway is an object of    Omnipay\Common\GatewayFactory interface (check the first line of code in the __construct() method)
 
 
@@ -34,7 +34,7 @@ class PaypalController extends Controller
         $this->gateway->setTestMode(true); // Meaning that we're using this whole thing only for "testing" purposes
     }
 
-    // Pay using PayPal    // https://omnipay.thephpleague.com/simple-example    // https://github.com/thephpleague/omnipay    
+    // Pay using PayPal    // https://omnipay.thephpleague.com/simple-example    // https://github.com/thephpleague/omnipay
     public function pay(Request $request) {
         try {
             $paypal_amount = round(Session::get('grand_total') / 80, 2); // 'grand_total' was stored in Session in checkout() method in Front/ProductsController.php    // Interacting With The Session: Retrieving Data: https://laravel.com/docs/9.x/session#retrieving-data    // Note: PayPal accepts world major currencies ONLY, so we divided INR by 80 to convert INR to USD
@@ -63,7 +63,7 @@ class PaypalController extends Controller
         }
     }
 
-    
+
     public function success(Request $request) {
         if (!Session::has('order_id')) { // if there's no 'order_id' in the Session    // 'user_id' was stored in the Session inside checkout() method in Front/ProductsController.php
             return view('cart');
@@ -96,12 +96,12 @@ class PaypalController extends Controller
                 $payment->save();
 
 
-                // Update the `order_status` column in `orders` table with 'Paid'    
+                // Update the `order_status` column in `orders` table with 'Paid'
                 $order_id = Session::get('order_id'); // Interacting With The Session: Retrieving Data: https://laravel.com/docs/9.x/session#retrieving-data
                 \App\Models\Order::where('id', $order_id)->update(['order_status' => 'Paid']);
 
 
-                // Send making the order PayPal payment confirmation email to the user    
+                // Send making the order PayPal payment confirmation email to the user
                 $orderDetails = \App\Models\Order::with('orders_products')->where('id', $order_id)->first()->toArray(); // Eager Loading: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'orders_products' is the relationship method name in Order.php model
                 $email = Auth::user()->email; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
 
@@ -114,7 +114,7 @@ class PaypalController extends Controller
                 ];
 
                 \Illuminate\Support\Facades\Mail::send('emails.order', $messageData, function ($message) use ($email) { // Sending Mail: https://laravel.com/docs/9.x/mail#sending-mail    // 'emails.order' is the order.blade.php file inside the 'resources/views/emails' folder that will be sent as an email    // We pass in all the variables that order.blade.php will use    // https://www.php.net/manual/en/functions.anonymous.php
-                    $message->to($email)->subject('Order Paid through PayPal - MultiVendorEcommerceApplication.com.eg');
+                    $message->to($email)->subject('Order Paid through PayPal - Caserole');
                 });
 
 
@@ -149,11 +149,11 @@ class PaypalController extends Controller
         }
     }
 
-    
+
     public function error() {
         // return 'User declined the payment';
 
-        
+
         return view('front.paypal.fail');
     }
 
