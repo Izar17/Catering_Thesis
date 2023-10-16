@@ -257,12 +257,12 @@
 
 
 
-                            @if ($totalStock > 0)
+                            {{-- @if ($totalStock > 0)
                                 <div class="left">
                                     <span>Only:</span>
                                     <span>{{ $totalStock }} left</span>
                                 </div>
-                            @endif
+                            @endif --}}
 
 
 

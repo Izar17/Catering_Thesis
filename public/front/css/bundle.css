@@ -6,8 +6,12 @@
  * Set up a background-color and height on the root and body element.
  */
 html, body {
-  background-color: #ffffff;
-  height: 100%; }
+    background-image: url('bg3.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100%;
+}
 
 /**
  * Basic styles for headings
