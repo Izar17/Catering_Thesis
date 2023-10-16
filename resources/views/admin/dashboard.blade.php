@@ -96,6 +96,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6 grid-margin transparent">
+                    <div class="row">
+                        <div class="col-md-6 stretch-card transparent">
+                            <div class="card card-dark-blue">
+                                <div class="card-body">
+                                    <p class="mb-4">Earnings</p>
+                                    <p class="fs-30 mb-2">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- content-wrapper ends -->
