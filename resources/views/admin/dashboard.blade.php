@@ -102,7 +102,7 @@
                             <div class="card card-dark-blue">
                                 <div class="card-body">
                                     <p class="mb-4">Earnings</p>
-                                    <p class="fs-30 mb-2">0</p>
+                                    <p class="fs-30 mb-2">₱{{ number_format($earningsCount, 2, '.', ',') }}</p>
                                 </div>
                             </div>
                         </div>
