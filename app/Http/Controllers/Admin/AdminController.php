@@ -16,7 +16,7 @@ class AdminController extends Controller
     public function dashboard() {
         // Correcting issues in the Skydash Admin Panel Sidebar using Session:
         Session::put('page', 'dashboard');
-
+        $vendor_id = Auth::guard('admin')->user()->vendor_id;
 
         $sectionsCount   = \App\Models\Section::count();
         $categoriesCount = \App\Models\Category::count();
@@ -25,10 +25,10 @@ class AdminController extends Controller
         $couponsCount    = \App\Models\Coupon::count();
         $brandsCount     = \App\Models\Brand::count();
         $usersCount      = \App\Models\User::count();
-        $earningsCount      = \App\Models\OrdersProduct::sum('product_price');
+        $earningsCount      = \App\Models\OrdersProduct::where('vendor_id',$vendor_id)->sum('product_price');
 
 
-        return view('admin/dashboard')->with(compact('sectionsCount', 'categoriesCount', 'productsCount', 'ordersCount', 'couponsCount', 'brandsCount', 'usersCount','earningsCount')); // is the same as:    return view('admin.dashboard');
+        return view('admin/dashboard')->with(compact('sectionsCount', 'categoriesCount', 'productsCount', 'ordersCount', 'couponsCount', 'brandsCount', 'usersCount','earningsCount','vendor_id')); // is the same as:    return view('admin.dashboard');
     }
 
     public function login(Request $request) { // Logging in using our 'admin' guard (whether 'vendor' or 'admin' (depending on the `type` and `vendor_id` columns in `admins` table)) we created in auth.php

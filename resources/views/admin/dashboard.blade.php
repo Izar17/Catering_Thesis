@@ -100,10 +100,12 @@
                     <div class="row">
                         <div class="col-md-6 stretch-card transparent">
                             <div class="card card-dark-blue">
-                                <div class="card-body">
+                                <a href="earnings">
+                                <div class="card-body" style="color:#fff;">
                                     <p class="mb-4">Earnings</p>
-                                    <p class="fs-30 mb-2">₱{{ number_format($earningsCount, 2, '.', ',') }}</p>
+                                    <p class="fs-30 mb-2">₱{{ number_format($earningsCount, 0, '.', ',') }}</p>
                                 </div>
+                            </a>
                             </div>
                         </div>
                     </div>

@@ -59,6 +59,13 @@
                 </div>
             </li>
 
+            <li class="nav-item">
+                <a @if (Session::get('page') == 'earnings') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ url('admin/earnings') }}">
+                    <i class="icon-layout menu-icon"></i>
+                    <span class="menu-title">Earnings</span>
+                </a>
+            </li>
+
         @else {{-- In case the authenticated user (the logged-in user) (using the 'admin' Authentication Guard in auth.php) type is 'superadmin', or 'admin', or 'subadmin' --}}
             <li class="nav-item">
                 <a @if (Session::get('page') == 'update_admin_password' || Session::get('page') == 'update_admin_details') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" data-toggle="collapse" href="#ui-settings" aria-expanded="false" aria-controls="ui-settings">
