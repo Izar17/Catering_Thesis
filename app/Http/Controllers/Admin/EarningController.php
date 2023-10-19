@@ -76,14 +76,14 @@ class EarningController extends Controller
 
 
                 $orders = \App\Models\Order::with([
-                    'orders_products' => function($query) use ($vendor_id) { // function () use ()     syntax: https://www.php.net/manual/en/functions.anonymous.php#:~:text=the%20use%20language%20construct     // 'orders_products' is the Relationship method name in Order.php model
-                        $query->where('vendor_id', $vendor_id); // `vendor_id` in `orders_products` table
+                    'orders_products' => function($query) use ($vendor_id,$startDate,$endDate) { // function () use ()     syntax: https://www.php.net/manual/en/functions.anonymous.php#:~:text=the%20use%20language%20construct     // 'orders_products' is the Relationship method name in Order.php model
+                        $query->where('vendor_id', $vendor_id)->whereBetween('created_at', [$startDate, $endDate]); // `vendor_id` in `orders_products` table
                     }
                 ])->orderBy('id', 'Desc')->get()->toArray();
                 // dd($orders);
 
             } else { // if the authenticated/logged-in user is 'admin', we show ALL orders
-                $orders = \App\Models\Order::with('orders_products')->orderBy('id', 'Desc')->get()->toArray(); // Eager Loading: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'orders_products' is the relationship method name in Order.php model
+                $orders = \App\Models\Order::with('orders_products')->whereBetween('created_at', [$startDate, $endDate])->orderBy('id', 'Desc')->get()->toArray(); // Eager Loading: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'orders_products' is the relationship method name in Order.php model
                 // dd($orders);
             }
 
