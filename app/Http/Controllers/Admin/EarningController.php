@@ -88,7 +88,7 @@ class EarningController extends Controller
             }
 
 
-            return view('admin.earnings.earnings')->with(compact('orders','earningsCount'));
+            return view('admin.earnings.earnings')->with(compact('orders','earningsCount','startDate','endDate'));
 
     }
 

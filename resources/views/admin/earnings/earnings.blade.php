@@ -9,29 +9,29 @@
             <form action="{{ url('admin/earningsSearch/') }}"
             method="post" enctype="multipart/form-data">
             @csrf
-            <div class="col-md-6 grid-margin transparent">
+            <div class="col-md-12 grid-margin transparent">
                 <div class="row">
-                    <div class="col-md-4 stretch-card transparent">
+                    <div class="col-md-2 stretch-card transparent">
                         <div class="card card-dark-blue">
                             <a href="earnings">
                                 <div class="card-body" style="color:#fff;">
-                                    <p class="fs-30 mb-2">₱{{ number_format($earningsCount, 0, '.', ',') }}</p>
+                                    <p class="fs-30 mb-2" style="margin-top:17px;">₱{{ number_format($earningsCount, 0, '.', ',') }}</p>
                                 </div>
                             </a>
                         </div>
                     </div>
 
-                        <div class="col-md-3 stretch-card transparent">
+                        <div class="col-md-3">
                             <div class="card-body">
-                                From: <input type="date" name="startDate"/>
+                                From: <input type="date" class="form-control" name="startDate" value="{{ $startDate ?? '' }}"/>
                             </div>
                         </div>
-                        <div class="col-md-3 stretch-card transparent">
+                        <div class="col-md-3">
                             <div class="card-body">
-                                To: <input type="date" name="endDate"/>
+                                To: <input type="date" class="form-control" name="endDate" value="{{ $endDate ?? '' }}"/>
                             </div>
                         </div>
-                        <div class="col-md-2 stretch-card transparent">
+                        <div class="col-md-1">
                             <div class="card-body">
                                 <button style="margin-top:25px;">Search</button>
                             </div>
