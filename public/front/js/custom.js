@@ -714,21 +714,21 @@ $(document).ready(function() {
     $('#checkPincode').click(function() {
         // alert('test');
 
-        var pincode = $('#pincode').val(); // using Custom HTML data attributes (data-*)
+        var eventDate = $('#eventDate').val();
+        var eventTime = $('#eventTime').val();
+        var productId = $('#product_id').val(); // using Custom HTML data attributes (data-*)
         // alert(pincode);
-        if (pincode == '') { // If the user doesn't enter their PIN code (if the PIN code is empty)
-            alert('Please enter Pincode');
-
-            return false; // Stop the function's execution and get out!
-        }
-
 
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}, // X-CSRF-TOKEN: https://laravel.com/docs/9.x/csrf#csrf-x-csrf-token
             url    : '/check-pincode', // check this route in web.php
             type   : 'post',
-            data   : {pincode: pincode}, // Sending name/value pairs to server with the AJAX request (AJAX call)
+            data   : {
+                eventDate: eventDate,
+                eventTime: eventTime,
+                productId: productId
+            }, // Sending name/value pairs to server with the AJAX request (AJAX call)
             success: function(resp) { // if the AJAX request / AJAX call is successful
                 alert(resp);
             },

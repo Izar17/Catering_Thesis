@@ -183,7 +183,7 @@
                 <div class="col-md-6 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Delivery Address</h4>
+                            <h4 class="card-title">Location of venue/Location of Event</h4>
                             <div class="form-group" style="height: 15px">
                                 <label style="font-weight: 550">Name: </label>
                                 <label>{{ $orderDetails['name'] }}</label>
@@ -234,10 +234,16 @@
                 <div class="col-md-6 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
+                            <h4 class="card-title">Event Date and Time</h4>
+                            {{ $productDetails['event_date'] }}
+                            {{ $productDetails['event_time'] }}
+
+                        </div>
+                        <div class="card-body">
                             <h4 class="card-title">Update Order Status</h4>  {{-- determined by 'admin'-s ONLY, not 'vendor'-s --}}
 
                             {{-- Allowing the general "Update Order Status" feature for 'admin'-s ONLY, and restricting it from 'vendor'-s ('vendor'-s can update their Ordered Products item statuses ONLY (at this page bottom)) --}}
-                            @if (Auth::guard('admin')->user()->type != 'vendor') {{-- If the authenticated/logged-in user is 'admin', allow "Update Order Status" feature --}} {{-- Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances --}} {{-- Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user --}}
+                            @if (Auth::guard('admin')->user()->type == 'vendor') {{-- If the authenticated/logged-in user is 'admin', allow "Update Order Status" feature --}} {{-- Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances --}} {{-- Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user --}}
 
                                 {{-- Note: The `order_statuses` table contains all kinds of order statuses (that can be updated by 'admin'-s ONLY in `orders` table) like: pending, in progress, shipped, canceled, ...etc. In `order_statuses` table, the `name` column can be: 'New', 'Pending', 'Canceled', 'In Progress', 'Shipped', 'Partially Shipped', 'Delivered', 'Partially Delivered' and 'Paid'. 'Partially Shipped': If one order has products from different vendors, and one vendor has shipped their product to the customer while other vendor (or vendors) didn't!. 'Partially Delivered': if one order has products from different vendors, and one vendor has shipped and DELIVERED their product to the customer while other vendor (or vendors) didn't!    // The `order_item_statuses` table contains all kinds of order statuses (that can be updated by both 'vendor'-s and 'admin'-s in `orders_products` table) like: pending, in progress, shipped, canceled, ...etc. --}}
                                 <form action="{{ url('admin/update-order-status') }}" method="post">  {{-- determined by 'admin'-s ONLY, not 'vendor'-s. This is in contrast to 'Order Item Status' which can be updated by both 'vendor'-s and 'admin'-s --}}

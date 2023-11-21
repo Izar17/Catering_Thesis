@@ -287,7 +287,7 @@
                             @csrf {{-- Preventing CSRF Requests: https://laravel.com/docs/9.x/csrf#preventing-csrf-requests --}}
 
 
-                            <input type="hidden" name="product_id" value="{{ $productDetails['id'] }}"> {{-- Add to Cart <form> --}}
+                            <input type="hidden" name="product_id" id="product_id" value="{{ $productDetails['id'] }}"> {{-- Add to Cart <form> --}}
 
 
                             <div class="section-5-product-variants u-s-p-y-14">
@@ -310,31 +310,34 @@
 
 
 
-                                <div class="sizes u-s-m-b-11" style="margin-top: 20px">
-                                    <span>Available Size:</span>
+                                <div class="sizes u-s-m-b-11">
+                                    <div class="quantity-wrapper u-s-m-b-22">
+                                        <span>Event Date and Time:</span>
+                                        <input type="date" id="eventDate" name="event_date" placeholder="Check" required>
+                                        <input type="time" id="eventTime" name="event_time" placeholder="Check" required>
+                                        <button type="button" id="checkPincode">Check Availability</button>
+                                    </div>
+                                    <span>Pax:</span>
                                     <div class="size-variant select-box-wrapper">
+                                        {{-- <input type="text" name="size" required/> --}}
                                         <select class="select-box product-size" id="getPrice" product-id="{{ $productDetails['id'] }}" name="size" required> {{-- Check front/js/custom.js file --}}
-
-
-
-                                            <option value="">Select Size</option>
+                                        <option value="">Select Pax</option>
                                             @foreach ($productDetails['attributes'] as $attribute)
                                                 <option value="{{ $attribute['size'] }}">{{ $attribute['size'] }}</option>
                                             @endforeach
-
-
-
                                         </select>
+
+                                        <input class="quantity-text-field" type="hidden" name="quantity" value="1">
                                     </div>
                                 </div>
                             </div>
-                            <div class="section-6-social-media-quantity-actions u-s-p-y-14">
+                            {{-- <div class="section-6-social-media-quantity-actions u-s-p-y-14">
 
 
                                 <div class="quantity-wrapper u-s-m-b-22">
                                     <span>Quantity:</span>
                                     <div class="quantity">
-                                        <input class="quantity-text-field" type="number" name="quantity" value="1">
+                                        <input class="quantity-text-field" type="hidden" name="quantity" value="1">
                                     </div>
                                 </div>
                                 <div>
@@ -345,15 +348,15 @@
 
 
 
+                            </div> --}}
+                            <div class="section-6-social-media-quantity-actions u-s-p-y-14">
+                                <div>
+                                    <button class="button button-outline-secondary" type="submit">Add to cart</button>
+                                    <button class="button button-outline-secondary far fa-heart u-s-m-l-6"></button>
+                                    <button class="button button-outline-secondary far fa-envelope u-s-m-l-6"></button>
+                                </div><br>
                             </div>
                         </form>
-
-
-                        {{-- PIN code Availability Check: check if the PIN code of the user's Delivery Address exists in our database (in both `cod_pincodes` and `prepaid_pincodes`) or not via AJAX. Check front/js/custom.js --}}
-                        <br><br><b>Check Availability Date: </b>
-                        <input type="date" id="pincode" placeholder="Check" required>
-                        <button type="button" id="checkPincode">Go</button> {{-- We'll use that checkPincode HTML id attribute in front/js/custom.js as a handle for jQuery --}}
-
 
                     </div>
                     <!-- Product-details /- -->

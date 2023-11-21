@@ -19,7 +19,7 @@
                 <div class="col-md-6 grid-margin transparent">
 
 
-                    <div class="row">
+                    {{-- <div class="row">
                         <div class="col-md-6 mb-4 stretch-card transparent">
                             <div class="card card-tale">
                                 <div class="card-body">
@@ -36,7 +36,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="row">
                         <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
                             <div class="card card-light-blue">
@@ -46,21 +46,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 stretch-card transparent">
-                            <div class="card card-light-danger">
-                                <div class="card-body">
-                                    <p class="mb-4">Total Brands</p>
-                                    <p class="fs-30 mb-2">{{ $brandsCount }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-                <div class="col-md-6 grid-margin transparent">
-                    <div class="row">
-                        <div class="col-md-6 mb-4 stretch-card transparent">
+                        <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
                             <div class="card card-tale">
                                 <div class="card-body">
                                     <p class="mb-4">Total Orders</p>
@@ -68,6 +54,20 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- <div class="col-md-6 stretch-card transparent">
+                            <div class="card card-light-danger">
+                                <div class="card-body">
+                                    <p class="mb-4">Total Brands</p>
+                                    <p class="fs-30 mb-2">{{ $brandsCount }}</p>
+                                </div>
+                            </div>
+                        </div> --}}
+                    </div>
+
+
+                </div>
+                <div class="col-md-6 grid-margin transparent">
+                    <div class="row">
                         <div class="col-md-6 mb-4 stretch-card transparent">
                             <div class="card card-dark-blue">
                                 <div class="card-body">
@@ -76,8 +76,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6 mb-4  mb-lg-0stretch-card transparent">
+                            <div class="card  card-light-danger">
+                                <a href="earnings">
+                                <div class="card-body" style="color:#fff;">
+                                    <p class="mb-4">Earnings</p>
+                                    <p class="fs-30 mb-2">₱{{ number_format($earningsCount, 0, '.', ',') }}</p>
+                                </div>
+                            </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="row">
+                    {{-- <div class="row">
                         <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
                             <div class="card card-light-blue">
                                 <div class="card-body">
@@ -94,21 +104,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-6 grid-margin transparent">
-                    <div class="row">
-                        <div class="col-md-6 stretch-card transparent">
-                            <div class="card card-dark-blue">
-                                <a href="earnings">
-                                <div class="card-body" style="color:#fff;">
-                                    <p class="mb-4">Earnings</p>
-                                    <p class="fs-30 mb-2">₱{{ number_format($earningsCount, 0, '.', ',') }}</p>
-                                </div>
-                            </a>
-                            </div>
-                        </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

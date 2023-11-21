@@ -102,6 +102,7 @@ class OrderController extends Controller
         // dd($orderLog);
 
 
+        $productDetails = \App\Models\OrdersProduct::where('order_id', $id)->first();
 
         // Calculate the total items count (the total quantity of all items) in the Cart (including how many items of the same product i.e. 3 small-sized T-shirts + 2 mobile phones of 128GB RAM)
         $total_items = 0;
@@ -120,7 +121,7 @@ class OrderController extends Controller
         }
 
 
-        return view('admin.orders.order_details')->with(compact('orderDetails', 'userDetails', 'orderStatuses', 'orderItemStatuses', 'orderLog', 'item_discount'));
+        return view('admin.orders.order_details')->with(compact('orderDetails', 'userDetails', 'orderStatuses', 'orderItemStatuses', 'orderLog', 'item_discount','productDetails'));
     }
 
     // Update Order Status (by 'admin'-s ONLY, not 'vendor'-s, in contrast to "Update Item Status" which can be updated by both 'vendor'-s and 'admin'-s) (Pending, Shipped, In Progress, Canceled, ...) in admin/orders/order_details.blade.php in Admin Panel
