@@ -26,9 +26,15 @@ class AdminController extends Controller
         $brandsCount     = \App\Models\Brand::count();
         $usersCount      = \App\Models\User::count();
         $earningsCount      = \App\Models\OrdersProduct::where('vendor_id',$vendor_id)->sum('product_price');
+        $labels = ['January', 'February', 'March', 'April', 'May'];
+        $data = [];
+
+        foreach ($labels as $label) {
+            $data[] = rand(10, 100);
+        }
 
 
-        return view('admin/dashboard')->with(compact('sectionsCount', 'categoriesCount', 'productsCount', 'ordersCount', 'couponsCount', 'brandsCount', 'usersCount','earningsCount','vendor_id')); // is the same as:    return view('admin.dashboard');
+        return view('admin/dashboard')->with(compact('sectionsCount', 'categoriesCount', 'productsCount', 'ordersCount', 'couponsCount', 'brandsCount', 'usersCount','earningsCount','vendor_id','labels','data')); // is the same as:    return view('admin.dashboard');
     }
 
     public function login(Request $request) { // Logging in using our 'admin' guard (whether 'vendor' or 'admin' (depending on the `type` and `vendor_id` columns in `admins` table)) we created in auth.php

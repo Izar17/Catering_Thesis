@@ -19,49 +19,32 @@
                 <div class="col-md-6 grid-margin transparent">
 
 
-                    {{-- <div class="row">
+                    <div class="row">
                         <div class="col-md-6 mb-4 stretch-card transparent">
                             <div class="card card-tale">
-                                <div class="card-body">
-                                    <p class="mb-4">Total Sections</p>
-                                    <p class="fs-30 mb-2">{{ $sectionsCount }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-4 stretch-card transparent">
-                            <div class="card card-dark-blue">
-                                <div class="card-body">
-                                    <p class="mb-4">Total Categories</p>
-                                    <p class="fs-30 mb-2">{{ $categoriesCount }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-                    <div class="row">
-                        <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
-                            <div class="card card-light-blue">
                                 <div class="card-body">
                                     <p class="mb-4">Total Products</p>
                                     <p class="fs-30 mb-2">{{ $productsCount }}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
-                            <div class="card card-tale">
+                        <div class="col-md-6 mb-4 stretch-card transparent">
+                            <div class="card card-dark-blue">
                                 <div class="card-body">
                                     <p class="mb-4">Total Orders</p>
                                     <p class="fs-30 mb-2">{{ $ordersCount }}</p>
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="col-md-6 stretch-card transparent">
-                            <div class="card card-light-danger">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-4 mb-lg-0 stretch-card transparent">
+                            <div class="card">
                                 <div class="card-body">
-                                    <p class="mb-4">Total Brands</p>
-                                    <p class="fs-30 mb-2">{{ $brandsCount }}</p>
+                                    <canvas id="myChart" width="400" height="200"></canvas>
                                 </div>
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
 
 
@@ -86,6 +69,14 @@
                             </a>
                             </div>
                         </div>
+                        <div class="col-md-12 stretch-card transparent">
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <canvas id="myBarChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {{-- <div class="row">
                         <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
@@ -106,9 +97,64 @@
                         </div>
                     </div> --}}
                 </div>
+                <div class="col-md-6 grid-margin transparent">
+                    <div class="row">
+                        <div class="col-md-12 mb-4 stretch-card transparent">
+                            <div class="card">
+                                <div class="card-body">
+                                    <canvas id="myPieChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- content-wrapper ends -->
+
+        <script src="{{ asset('front/js/vendor/chart.js/dist/Chart.min.js') }}"></script>
+        <script src="{{ asset('front/js/vendor/chart.js/dist/Chart.extension.js') }}"></script>
+
+        <script>
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($labels) !!},
+                    datasets: [{
+                        label: 'My Line Graph',
+                        data: {!! json_encode($data) !!},
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+            var ctx = document.getElementById('myBarChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {!! json_encode($labels) !!},
+                    datasets: [{
+                        label: 'My Bar Graph',
+                        data: {!! json_encode($data) !!},
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+            var ctx = document.getElementById('myPieChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: {!! json_encode($labels) !!},
+                    datasets: [{
+                        label: 'My Bar Graph',
+                        data: {!! json_encode($data) !!},
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+        </script>
         @include('admin.layout.footer')
         <!-- partial -->
     </div>
