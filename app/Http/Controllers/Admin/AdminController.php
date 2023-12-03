@@ -13,44 +13,95 @@ use Symfony\Component\VarDumper\VarDumper;
 
 class AdminController extends Controller
 {
-    public function dashboard() {
+    public function dashboard()
+    {
         // Correcting issues in the Skydash Admin Panel Sidebar using Session:
         Session::put('page', 'dashboard');
         $vendor_id = Auth::guard('admin')->user()->vendor_id;
 
-        $sectionsCount   = \App\Models\Section::count();
+        $sectionsCount = \App\Models\Section::count();
         $categoriesCount = \App\Models\Category::count();
-        $productsCount   = \App\Models\Product::count();
-        $ordersCount     = \App\Models\Order::count();
-        $couponsCount    = \App\Models\Coupon::count();
-        $brandsCount     = \App\Models\Brand::count();
-        $usersCount      = \App\Models\User::count();
-        $earningsCount      = \App\Models\OrdersProduct::where('vendor_id',$vendor_id)->sum('product_price');
-        $labels = ['January', 'February', 'March', 'April', 'May'];
+        $productsCount = \App\Models\Product::count();
+        $ordersCount = \App\Models\Order::count();
+        $couponsCount = \App\Models\Coupon::count();
+        $brandsCount = \App\Models\Brand::count();
+        $usersCount = \App\Models\User::count();
+        $earningsCount = \App\Models\OrdersProduct::where('vendor_id', $vendor_id)->sum('product_price');
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
         $data = [];
+        $lineData = [];
+        $barData = [];
 
+        // Fetch orders grouped by month and grand_total
+        $ordersByMonth = \App\Models\Order::selectRaw('DATE_FORMAT(orders.created_at, "%b") as month, orders.grand_total')
+            ->join('orders_products as op', 'orders.id', '=', 'op.order_id')
+            ->where('op.vendor_id', $vendor_id)
+            ->orderBy('orders.created_at')
+            ->get();
+
+        // Organize the data based on the labels
         foreach ($labels as $label) {
-            $data[] = rand(10, 100);
+            $found = false;
+            foreach ($ordersByMonth as $order) {
+                if ($order->month === $label) {
+                    $lineData[] = $order->grand_total;
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $lineData[] = 0;
+            }
         }
 
+        // Fetch the most ordered product for each month with product_name
+        $mostOrderedProducts = \App\Models\OrdersProduct::selectRaw('DATE_FORMAT(orders_products.created_at, "%b") as month, product_id, COUNT(*) as order_count, product_name')
+            ->where('vendor_id', $vendor_id)
+            ->groupBy('month', 'product_id', 'product_name')
+            ->orderByRaw('month, order_count DESC')
+            ->get(['month', 'product_id', 'product_name']);
 
-        return view('admin/dashboard')->with(compact('sectionsCount', 'categoriesCount', 'productsCount', 'ordersCount', 'couponsCount', 'brandsCount', 'usersCount','earningsCount','vendor_id','labels','data')); // is the same as:    return view('admin.dashboard');
+        foreach ($labels as $label) {
+            $found = false;
+            foreach ($mostOrderedProducts as $product) {
+                if ($product->month === $label) {
+                    $barData[] = [
+                        'label' => $product->product_name,
+                        'value' => $product->order_count,
+                    ];
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                // If no orders for the month, set value to 0
+                $barData[] = ['label' => '', 'value' => 0];
+            }
+        }
+
+        $productsData = \App\Models\OrdersProduct::select('product_id', 'product_name', \DB::raw('COUNT(*) as order_count'))
+            ->where('vendor_id',$vendor_id)
+            ->groupBy('product_id', 'product_name')
+            ->orderByDesc('order_count')
+            ->get();
+        return view('admin/dashboard')->with(compact('sectionsCount', 'categoriesCount', 'productsCount', 'ordersCount', 'couponsCount', 'brandsCount', 'usersCount', 'earningsCount', 'vendor_id', 'labels', 'data', 'lineData', 'barData', 'productsData')); // is the same as:    return view('admin.dashboard');
     }
 
-    public function login(Request $request) { // Logging in using our 'admin' guard (whether 'vendor' or 'admin' (depending on the `type` and `vendor_id` columns in `admins` table)) we created in auth.php
+    public function login(Request $request)
+    { // Logging in using our 'admin' guard (whether 'vendor' or 'admin' (depending on the `type` and `vendor_id` columns in `admins` table)) we created in auth.php
         if ($request->isMethod('post')) {
             $data = $request->all();
             // dd($data);
 
             // Validation
             $rules = [
-                'email'    => 'required|email|max:255',
+                'email' => 'required|email|max:255',
                 'password' => 'required',
             ];
 
             $customMessages = [ // Specifying A Custom Message For A Given Attribute: https://laravel.com/docs/9.x/validation#specifying-a-custom-message-for-a-given-attribute
-                'email.required'    => 'Email Address is required!',
-                'email.email'       => 'Valid Email Address is required',
+                'email.required' => 'Email Address is required!',
+                'email.email' => 'Valid Email Address is required',
                 'password.required' => 'Password is required!',
             ];
 
@@ -78,12 +129,14 @@ class AdminController extends Controller
         return view('admin/login');
     }
 
-    public function logout() {
+    public function logout()
+    {
         Auth::guard('admin')->logout(); // Logging out using our 'admin' guard that we created in auth.php    // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
         return redirect('');
     }
 
-    public function updateAdminPassword(Request $request) {
+    public function updateAdminPassword(Request $request)
+    {
         // Correcting issues in the Skydash Admin Panel Sidebar using Session
         Session::put('page', 'update_admin_password');
 
@@ -119,7 +172,8 @@ class AdminController extends Controller
         return view('admin/settings/update_admin_password')->with(compact('adminDetails'));
     }
 
-    public function checkAdminPassword(Request $request) { // This method is called from the AJAX call in admin/js/custom.js page
+    public function checkAdminPassword(Request $request)
+    { // This method is called from the AJAX call in admin/js/custom.js page
         $data = $request->all();
         // dd($data);
 
@@ -132,7 +186,8 @@ class AdminController extends Controller
         }
     }
 
-    public function updateAdminDetails(Request $request) { // the update_admin_details.blade.php
+    public function updateAdminDetails(Request $request)
+    { // the update_admin_details.blade.php
         // Correcting issues in the Skydash Admin Panel Sidebar using Session
         Session::put('page', 'update_admin_details');
 
@@ -144,15 +199,15 @@ class AdminController extends Controller
             // Laravel's Validation
             // Customizing Laravel's Validation Error Messages: https://laravel.com/docs/9.x/validation#customizing-the-error-messages    // Customizing Validation Rules: https://laravel.com/docs/9.x/validation#custom-validation-rules
             $rules = [
-                'admin_name'   => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
+                'admin_name' => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
                 'admin_mobile' => 'required|numeric',
             ];
 
             $customMessages = [ // Specifying A Custom Message For A Given Attribute: https://laravel.com/docs/9.x/validation#specifying-a-custom-message-for-a-given-attribute
-                'admin_name.required'   => 'Name is required',
-                'admin_name.regex'      => 'Valid Name is required',
+                'admin_name.required' => 'Name is required',
+                'admin_name.regex' => 'Valid Name is required',
                 'admin_mobile.required' => 'Mobile is required',
-                'admin_mobile.numeric'  => 'Valid Mobile is required',
+                'admin_mobile.numeric' => 'Valid Mobile is required',
             ];
 
             $this->validate($request, $rules, $customMessages);
@@ -187,9 +242,9 @@ class AdminController extends Controller
 
             // Update Admin Details
             \App\Models\Admin::where('id', Auth::guard('admin')->user()->id)->update([ // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
-                'name'   => $data['admin_name'],
+                'name' => $data['admin_name'],
                 'mobile' => $data['admin_mobile'],
-                'image'  => $imageName
+                'image' => $imageName
             ]); // Note that the image name is the random image name that we generated
 
             return redirect()->back()->with('success_message', 'Admin details updated successfully!');
@@ -199,7 +254,8 @@ class AdminController extends Controller
         return view('admin/settings/update_admin_details');
     }
 
-    public function updateVendorDetails($slug, Request $request) { // $slug can only be: 'personal', 'business' or 'bank'
+    public function updateVendorDetails($slug, Request $request)
+    { // $slug can only be: 'personal', 'business' or 'bank'
         if ($slug == 'personal') {
             // Correcting issues in the Skydash Admin Panel Sidebar using Session
             Session::put('page', 'update_personal_details');
@@ -212,18 +268,18 @@ class AdminController extends Controller
 
                 // Laravel's Validation    // Customizing Laravel's Validation Error Messages: https://laravel.com/docs/9.x/validation#customizing-the-error-messages    // Customizing Validation Rules: https://laravel.com/docs/9.x/validation#custom-validation-rules
                 $rules = [
-                    'vendor_name'   => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
-                    'vendor_city'   => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
+                    'vendor_name' => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
+                    'vendor_city' => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
                     'vendor_mobile' => 'required|numeric',
                 ];
 
                 $customMessages = [ // Specifying A Custom Message For A Given Attribute: https://laravel.com/docs/9.x/validation#specifying-a-custom-message-for-a-given-attribute
-                    'vendor_name.required'   => 'Name is required',
-                    'vendor_city.required'   => 'City is required',
-                    'vendor_city.regex'      => 'Valid City alphabetical is required',
-                    'vendor_name.regex'      => 'Valid Name is required',
+                    'vendor_name.required' => 'Name is required',
+                    'vendor_city.required' => 'City is required',
+                    'vendor_city.regex' => 'Valid City alphabetical is required',
+                    'vendor_name.regex' => 'Valid Name is required',
                     'vendor_mobile.required' => 'Mobile is required',
-                    'vendor_mobile.numeric'  => 'Valid Mobile is required',
+                    'vendor_mobile.numeric' => 'Valid Mobile is required',
                 ];
 
                 $this->validate($request, $rules, $customMessages);
@@ -259,18 +315,18 @@ class AdminController extends Controller
                 // Vendor details need to be updated in BOTH `admins` and `vendors` tables:
                 // Update Vendor Details in 'admins' table
                 \App\Models\Admin::where('id', Auth::guard('admin')->user()->id)->update([ // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
-                    'name'   => $data['vendor_name'],
+                    'name' => $data['vendor_name'],
                     'mobile' => $data['vendor_mobile'],
-                    'image'  => $imageName
+                    'image' => $imageName
                 ]); // Note that the image name is the random image name that we generated
 
                 // Update Vendor Details in 'vendors' table
                 \App\Models\Vendor::where('id', Auth::guard('admin')->user()->vendor_id)->update([ // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
-                    'name'    => $data['vendor_name'],
-                    'mobile'  => $data['vendor_mobile'],
+                    'name' => $data['vendor_name'],
+                    'mobile' => $data['vendor_mobile'],
                     'address' => $data['vendor_address'],
-                    'city'    => $data['vendor_city'],
-                    'state'   => $data['vendor_state'],
+                    'city' => $data['vendor_city'],
+                    'state' => $data['vendor_state'],
                     'country' => $data['vendor_country'],
                     'pincode' => $data['vendor_pincode'],
                 ]);
@@ -293,18 +349,18 @@ class AdminController extends Controller
 
                 // Laravel's Validation    // Customizing Laravel's Validation Error Messages: https://laravel.com/docs/9.x/validation#customizing-the-error-messages    // Customizing Validation Rules: https://laravel.com/docs/9.x/validation#custom-validation-rules
                 $rules = [
-                    'shop_name'           => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
-                    'shop_city'           => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
-                    'shop_mobile'         => 'required|numeric',
+                    'shop_name' => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
+                    'shop_city' => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
+                    'shop_mobile' => 'required|numeric',
                 ];
 
                 $customMessages = [ // Specifying A Custom Message For A Given Attribute: https://laravel.com/docs/9.x/validation#specifying-a-custom-message-for-a-given-attribute
-                    'shop_name.required'           => 'Name is required',
-                    'shop_city.required'           => 'City is required',
-                    'shop_city.regex'              => 'Valid City alphabetical is required',
-                    'shop_name.regex'              => 'Valid Shop Name is required',
-                    'shop_mobile.required'         => 'Mobile is required',
-                    'shop_mobile.numeric'          => 'Valid Mobile is required',
+                    'shop_name.required' => 'Name is required',
+                    'shop_city.required' => 'City is required',
+                    'shop_city.regex' => 'Valid City alphabetical is required',
+                    'shop_name.regex' => 'Valid Shop Name is required',
+                    'shop_mobile.required' => 'Mobile is required',
+                    'shop_mobile.numeric' => 'Valid Mobile is required',
                 ];
 
                 $this->validate($request, $rules, $customMessages);
@@ -339,28 +395,28 @@ class AdminController extends Controller
                 if ($vendorCount > 0) { // if there's a vendor already existing, them UPDATE
                     // UPDATE `vendors_business_details` table
                     \App\Models\VendorsBusinessDetail::where('vendor_id', Auth::guard('admin')->user()->vendor_id)->update([ // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
-                        'shop_name'               => $data['shop_name'],
-                        'shop_mobile'             => $data['shop_mobile'],
-                        'shop_website'            => $data['shop_website'],
-                        'shop_address'            => $data['shop_address'],
-                        'shop_city'               => $data['shop_city'],
-                        'shop_state'              => $data['shop_state'],
-                        'shop_country'            => $data['shop_country'],
-                        'shop_pincode'            => $data['shop_pincode'],
+                        'shop_name' => $data['shop_name'],
+                        'shop_mobile' => $data['shop_mobile'],
+                        'shop_website' => $data['shop_website'],
+                        'shop_address' => $data['shop_address'],
+                        'shop_city' => $data['shop_city'],
+                        'shop_state' => $data['shop_state'],
+                        'shop_country' => $data['shop_country'],
+                        'shop_pincode' => $data['shop_pincode'],
                     ]);
 
                 } else { // if there's no vendor already existing, then INSERT
                     // INSERT INTO `vendors_business_details` table
                     \App\Models\VendorsBusinessDetail::insert([
-                        'vendor_id'               => Auth::guard('admin')->user()->vendor_id, // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
-                        'shop_name'               => $data['shop_name'],
-                        'shop_mobile'             => $data['shop_mobile'],
-                        'shop_website'            => $data['shop_website'],
-                        'shop_address'            => $data['shop_address'],
-                        'shop_city'               => $data['shop_city'],
-                        'shop_state'              => $data['shop_state'],
-                        'shop_country'            => $data['shop_country'],
-                        'shop_pincode'            => $data['shop_pincode'],
+                        'vendor_id' => Auth::guard('admin')->user()->vendor_id, // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
+                        'shop_name' => $data['shop_name'],
+                        'shop_mobile' => $data['shop_mobile'],
+                        'shop_website' => $data['shop_website'],
+                        'shop_address' => $data['shop_address'],
+                        'shop_city' => $data['shop_city'],
+                        'shop_state' => $data['shop_state'],
+                        'shop_country' => $data['shop_country'],
+                        'shop_pincode' => $data['shop_pincode'],
                     ]);
                 }
 
@@ -389,16 +445,16 @@ class AdminController extends Controller
                 // Laravel's Validation    // Customizing Laravel's Validation Error Messages: https://laravel.com/docs/9.x/validation#customizing-the-error-messages    // Customizing Validation Rules: https://laravel.com/docs/9.x/validation#custom-validation-rules
                 $rules = [
                     'account_holder_name' => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
-                    'bank_name'           => 'required', // only alphabetical characters and spaces
-                    'account_number'      => 'required|numeric',
+                    'bank_name' => 'required', // only alphabetical characters and spaces
+                    'account_number' => 'required|numeric',
                 ];
 
                 $customMessages = [ // Specifying A Custom Message For A Given Attribute: https://laravel.com/docs/9.x/validation#specifying-a-custom-message-for-a-given-attribute
                     'account_holder_name.required' => 'Account Holder Name is required',
-                    'bank_name.required'           => 'Bank Name is required',
-                    'account_holder_name.regex'    => 'Valid Account Holder Name is required',
-                    'account_number.required'      => 'Account Number is required',
-                    'account_number.numeric'       => 'Valid Account Number is required',
+                    'bank_name.required' => 'Bank Name is required',
+                    'account_holder_name.regex' => 'Valid Account Holder Name is required',
+                    'account_number.required' => 'Account Number is required',
+                    'account_number.numeric' => 'Valid Account Number is required',
                 ];
 
                 $this->validate($request, $rules, $customMessages);
@@ -409,17 +465,17 @@ class AdminController extends Controller
                     // UPDATE `vendors_bank_details` table
                     \App\Models\VendorsBankDetail::where('vendor_id', Auth::guard('admin')->user()->vendor_id)->update([ // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
                         'account_holder_name' => $data['account_holder_name'],
-                        'bank_name'           => $data['bank_name'],
-                        'account_number'      => $data['account_number'],
+                        'bank_name' => $data['bank_name'],
+                        'account_number' => $data['account_number'],
                     ]);
 
                 } else { // if there's no vendor already existing, then INSERT
                     // INSERT INTO `vendors_bank_details` table
                     \App\Models\VendorsBankDetail::insert([
-                        'vendor_id'           => Auth::guard('admin')->user()->vendor_id, // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
+                        'vendor_id' => Auth::guard('admin')->user()->vendor_id, // Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances
                         'account_holder_name' => $data['account_holder_name'],
-                        'bank_name'           => $data['bank_name'],
-                        'account_number'      => $data['account_number'],
+                        'bank_name' => $data['bank_name'],
+                        'account_number' => $data['account_number'],
                     ]);
                 }
 
@@ -449,7 +505,8 @@ class AdminController extends Controller
     }
 
     // Update the vendor's commission percentage (by the Admin) in `vendors` table (for every vendor on their own) in the Admin Panel in admin/admins/view_vendor_details.blade.php (Commissions module: Every vendor must pay a certain commission (that may vary from a vendor to another) for the website owner (admin) on every item sold, and it's defined by the website owner (admin))
-    public function updateVendorCommission(Request $request) {
+    public function updateVendorCommission(Request $request)
+    {
         if ($request->isMethod('post')) { // if the HTML Form is submitted (in admin/admins/view_vendor_details.blade.php)
             $data = $request->all();
             // dd($data);
@@ -462,7 +519,8 @@ class AdminController extends Controller
         }
     }
 
-    public function admins($type = null) { // $type is the `type` column in the `admins` which can only be: superadmin, admin, subadmin or vendor    // A default value of null (to allow not passing a {type} slug, and in this case, the page will view ALL of the superadmin, admins, subadmins and vendors at the same time)
+    public function admins($type = null)
+    { // $type is the `type` column in the `admins` which can only be: superadmin, admin, subadmin or vendor    // A default value of null (to allow not passing a {type} slug, and in this case, the page will view ALL of the superadmin, admins, subadmins and vendors at the same time)
         $admins = \App\Models\Admin::query();
         // dd($admins);
 
@@ -486,15 +544,17 @@ class AdminController extends Controller
         return view('admin/admins/admins')->with(compact('admins', 'title'));
     }
 
-    public function viewVendorDetails($id) { // View further 'vendor' details inside Admin Management table (if the authenticated user is superadmin, admin or subadmin)
-        $vendorDetails = \App\Models\Admin::with('vendorPersonal', 'vendorBusiness','vendorBank')->where('id', $id)->first(); // Using the relationship defined in the Admin.php model to be able to get data from `vendors`, `vendors_business_details` and `vendors_bank_details` tables
+    public function viewVendorDetails($id)
+    { // View further 'vendor' details inside Admin Management table (if the authenticated user is superadmin, admin or subadmin)
+        $vendorDetails = \App\Models\Admin::with('vendorPersonal', 'vendorBusiness', 'vendorBank')->where('id', $id)->first(); // Using the relationship defined in the Admin.php model to be able to get data from `vendors`, `vendors_business_details` and `vendors_bank_details` tables
         $vendorDetails = json_decode(json_encode($vendorDetails), true); // We used json_decode(json_encode($variable), true) to convert $vendorDetails to an array instead of Laravel's toArray() method
         // dd($vendorDetails);
 
         return view('admin/admins/view_vendor_details')->with(compact('vendorDetails'));
     }
 
-    public function updateAdminStatus(Request $request) { // Update Admin Status using AJAX in admins.blade.php
+    public function updateAdminStatus(Request $request)
+    { // Update Admin Status using AJAX in admins.blade.php
         if ($request->ajax()) { // if the request is coming via an AJAX call
             $data = $request->all(); // Getting the name/value pairs array that are sent from the AJAX request (AJAX call)
             // dd($data);
@@ -528,8 +588,8 @@ class AdminController extends Controller
 
                 // The email message data/variables that will be passed in to the email view
                 $messageData = [
-                    'email'  => $adminDetails['email'],
-                    'name'   => $adminDetails['name'],
+                    'email' => $adminDetails['email'],
+                    'name' => $adminDetails['name'],
                     'mobile' => $adminDetails['mobile'],
                 ];
 
@@ -542,7 +602,7 @@ class AdminController extends Controller
 
 
             return response()->json([ // JSON Responses: https://laravel.com/docs/9.x/responses#json-responses
-                'status'   => $status,
+                'status' => $status,
                 'admin_id' => $data['admin_id']
             ]);
         }
