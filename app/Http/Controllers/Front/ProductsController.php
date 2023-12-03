@@ -501,8 +501,10 @@ class ProductsController extends Controller
         $meta_description = $productDetails['meta_description'];
         $meta_keywords = $productDetails['meta_keywords'];
 
-
-        return view('front.products.detail')->with(compact('productDetails', 'categoryDetails', 'totalStock', 'similarProducts', 'recentlyViewedProducts', 'groupProducts', 'meta_title', 'meta_description', 'meta_keywords', 'ratings', 'avgRating', 'avgStarRating', 'ratingOneStarCount', 'ratingTwoStarCount', 'ratingThreeStarCount', 'ratingFourStarCount', 'ratingFiveStarCount'));
+        $vendor_id = \App\Models\Product::where('id', $id)->latest()->first()->vendor_id;
+        $addOns = \App\Models\Addon::where('vendor_id', $vendor_id)->get(); // sum() the `stock` column of the `products_attributes` table    // sum(): https://laravel.com/docs/9.x/collections#method-sum
+        //dd($vendor_id);
+        return view('front.products.detail')->with(compact('productDetails', 'categoryDetails', 'totalStock', 'similarProducts', 'recentlyViewedProducts', 'groupProducts', 'meta_title', 'meta_description', 'meta_keywords', 'ratings', 'avgRating', 'avgStarRating', 'ratingOneStarCount', 'ratingTwoStarCount', 'ratingThreeStarCount', 'ratingFourStarCount', 'ratingFiveStarCount','addOns'));
     }
 
 

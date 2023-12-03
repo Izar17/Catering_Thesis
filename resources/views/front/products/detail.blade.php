@@ -214,7 +214,7 @@
 
                                 @if ($getDiscountPrice > 0) {{-- if there's a discount on the product price --}}
                                     <div class="price">
-                                        <h4>P{{ $getDiscountPrice }}</h4>
+                                        <h4 id="disPrice">P{{ $getDiscountPrice }}</h4>
                                     </div>
                                     <div class="original-price">
                                         <span>Original Price:</span>
@@ -291,9 +291,6 @@
 
 
                             <div class="section-5-product-variants u-s-p-y-14">
-
-
-
                                 {{-- Managing Product Colors (using the `group_code` column in `products` table) --}}
                                 @if (count($groupProducts) > 0) {{-- if there's a value for the `group_code` column (in `products` table) for the currently viewed product --}}
                                     <div>
@@ -330,25 +327,56 @@
                                         <input class="quantity-text-field" type="hidden" name="quantity" value="1">
                                     </div>
                                 </div>
-                            </div>
-                            {{-- <div class="section-6-social-media-quantity-actions u-s-p-y-14">
+                                <style>
+                                    .button-span {
+                                        display: inline-block;
+                                        padding: 2px 8px; /* Adjust padding as needed */
+                                        background-color: #007bff; /* Button background color */
+                                        color: #fff; /* Button text color */
+                                        border: 1px solid #007bff; /* Button border color */
+                                        cursor: pointer;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        font-size: 14px;
+                                        border-radius: 4px; /* Adjust border-radius for rounded corners */
+                                    }
 
-
-                                <div class="quantity-wrapper u-s-m-b-22">
-                                    <span>Quantity:</span>
-                                    <div class="quantity">
-                                        <input class="quantity-text-field" type="hidden" name="quantity" value="1">
+                                    .button-span:hover {
+                                        background-color: #0056b3; /* Button background color on hover */
+                                        border-color: #0056b3; /* Button border color on hover */
+                                    }
+                                </style>
+                                <div class="sizes u-s-m-b-11">
+                                    <div class="add-ons">
+                                        <span>Add-Ons</span>
+                                        <table id="addonTable" style="width:500px;">
+                                            <tr>
+                                                <th style="padding-bottom:10px;">&nbsp;</th>
+                                                <th>Code</th>
+                                                <th>Name</th>
+                                                <th>Detail</th>
+                                                <th>SKU</th>
+                                                <th>Amount</th>
+                                                <th>Quantity</th>
+                                                <th>Total</th>
+                                            </tr>
+                                            @foreach ($addOns as $addon)
+                                                <tr class="addon-row">
+                                                    <td><input type="hidden" value="{{ $addon->id }}"/></td>
+                                                    <td>{{ $addon->addon_code }}</td>
+                                                    <td>{{ $addon->addon_name }}</td>
+                                                    <td>{{ $addon->addon_detail }}</td>
+                                                    <td>{{ $addon->qty }} pcs</td>
+                                                    <td class="amount">P{{ $addon->amount }}</td>
+                                                    <td><input type="number" class="quantity" min="0" style="width:60px;" onchange="updateTotal(this)"/></td>
+                                                    <td><input type="text" class="total" id="total" style="width:60px;background-color:grey;" readonly/></td>
+                                                </tr>
+                                            @endforeach
+                                        </table>
                                     </div>
                                 </div>
-                                <div>
-                                    <button class="button button-outline-secondary" type="submit">Add to cart</button>
-                                    <button class="button button-outline-secondary far fa-heart u-s-m-l-6"></button>
-                                    <button class="button button-outline-secondary far fa-envelope u-s-m-l-6"></button>
-                                </div>
-
-
-
-                            </div> --}}
+                            </div>
+                                <hr>Total with Add-ons:</h3> <h3 id="withAddonTotal">P0.00</h3>
                             <div class="section-6-social-media-quantity-actions u-s-p-y-14">
                                 <div>
                                     <button class="button button-outline-secondary" type="submit">Add to cart</button>
@@ -837,4 +865,41 @@
         </div>
     </div>
     <!-- Single-Product-Full-Width-Page /- -->
+<script>
+    function updateTotal(input) {
+        var row = input.closest('.addon-row');
+        var amountElement = row.querySelector('.amount');
+        var quantity = parseFloat(input.value) || 0;
+        var amount = parseFloat(amountElement.textContent.replace('P', '')) || 0;
+        var totalElement = row.querySelector('.total');
+        var totalAmount = amount * quantity;
+        totalElement.value = 'P' + totalAmount.toFixed(2);
+
+
+
+        // Get all rows with class 'addon-row'
+        var allRows = document.querySelectorAll('.addon-row');
+
+        // Initialize the sum
+        var totalSum = 0;
+
+        // Loop through each row and add up the 'total' values
+        allRows.forEach(function(row) {
+            var rowTotalElement = row.querySelector('.total');
+            if (rowTotalElement) {
+                totalSum += parseFloat(rowTotalElement.value.replace('P', '')) || 0;
+            }
+        });
+
+        var disValue = document.getElementById('disPrice').textContent;
+        var newDisPrice = parseFloat(disValue.replace('P', '')) + totalSum;
+        // Update the total value
+        document.getElementById('withAddonTotal').textContent = 'P' + newDisPrice.toFixed(2);
+
+
+
+
+
+    }
+    </script>
 @endsection

@@ -41,6 +41,7 @@
                     <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
                         <li class="nav-item"> <a @if (Session::get('page') == 'products')   style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/products') }}">Products</a></li>
                         <li class="nav-item"> <a @if (Session::get('page') == 'coupons')    style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/coupons') }}">Coupons</a></li>
+                        <li class="nav-item"> <a @if (Session::get('page') == 'addons')    style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/addons') }}">Add-Ons</a></li>
                     </ul>
                 </div>
             </li>
@@ -114,6 +115,7 @@
                         <li class="nav-item"> <a @if (Session::get('page') == 'brands')     style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/brands') }}">Brands</a></li>
                         <li class="nav-item"> <a @if (Session::get('page') == 'products')   style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/products') }}">Products</a></li>
                         <li class="nav-item"> <a @if (Session::get('page') == 'coupons')    style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/coupons') }}">Coupons</a></li>
+                        <li class="nav-item"> <a @if (Session::get('page') == 'addons')    style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/addons') }}">Add-Ons</a></li>
                         <li class="nav-item"> <a @if (Session::get('page') == 'filters')    style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ url('admin/filters') }}">Filters</a></li>
                     </ul>
                 </div>

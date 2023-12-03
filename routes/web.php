@@ -104,6 +104,14 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         // Render admin/coupons/add_edit_coupon.blade.php page with 'GET' request ('Edit/Update the Coupon') if the {id?} Optional Parameter is passed, or if it's not passed, it's a GET request too to 'Add a Coupon', or it's a POST request for the HTML Form submission in the same page
         Route::match(['get', 'post'], 'add-edit-coupon/{id?}', 'CouponsController@addEditCoupon'); // the slug (Route Parameter) {id?} is an Optional Parameter, so if it's passed, this means 'Edit/Update the Coupon', and if not passed, this means' Add a Coupon'    // GET request to render the add_edit_coupon.blade.php view (whether Add or Edit depending on passing or not passing the Optional Parameter {id?}), and POST request to submit the <form> in that same page
 
+        // Add-Ons
+        Route::get('addons', 'AddonsController@addons');
+        Route::post('update-addon-status', 'AddonsController@updateAddonStatus');
+        Route::get('delete-addon/{id}', 'AddonsController@deleteAddon');
+
+        // Render admin/addons/add_edit_coupon.blade.php page with 'GET' request ('Edit/Update the Coupon') if the {id?} Optional Parameter is passed, or if it's not passed, it's a GET request too to 'Add a Coupon', or it's a POST request for the HTML Form submission in the same page
+        Route::match(['get', 'post'], 'add-edit-addon/{id?}', 'AddonsController@addEditAddon'); // the slug (Route Parameter) {id?} is an Optional Parameter, so if it's passed, this means 'Edit/Update the Coupon', and if not passed, this means' Add a Coupon'    // GET request to render the add_edit_coupon.blade.php view (whether Add or Edit depending on passing or not passing the Optional Parameter {id?}), and POST request to submit the <form> in that same page
+
         // Users
         Route::get('users', 'UserController@users'); // Render admin/users/users.blade.php page in the Admin Panel
         Route::post('update-user-status', 'UserController@updateUserStatus'); // Update User Status (active/inactive) via AJAX in admin/users/users.blade.php, check admin/js/custom.js
