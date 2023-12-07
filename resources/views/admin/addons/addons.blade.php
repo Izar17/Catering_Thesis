@@ -37,6 +37,7 @@
                                             <th>Addon Code</th>
                                             <th>Addon Name</th>
                                             <th>Addon Detail</th>
+                                            <th>Addon Category</th>
                                             <th>Quantity</th>
                                             <th>Price</th>
                                             <th>Status</th>
@@ -50,6 +51,7 @@
                                                 <td>{{ $addon['addon_code'] }}</td>
                                                 <td>{{ $addon['addon_name'] }}</td>
                                                 <td>{{ $addon['addon_detail'] }}</td>
+                                                <td>{{ $addon['category_name'] }}</td>
                                                 <td> {{ $addon['qty'] }}</td>
                                                 <td> {{ $addon['amount'] }}</td>
                                                 <td>

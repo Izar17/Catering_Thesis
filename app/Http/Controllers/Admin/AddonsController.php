@@ -27,7 +27,10 @@ class AddonsController extends Controller
                 return redirect('admin/update-vendor-details/personal')->with('error_message', 'Your Vendor Account is not approved yet. Please make sure to fill your valid personal, business and bank details'); // the error_message will appear to the vendor in the route: 'admin/update-vendor-details/personal' which is the update_vendor_details.blade.php page
             }
 
-            $addons = \App\Models\Addon::where('vendor_id', $vendor_id)->get()->toArray(); // Get ONLY the addons that BELONG TO the vendor
+            $addons = \App\Models\Addon::where('vendor_id', $vendor_id)
+            ->join('categories', 'addons.categories', '=', 'categories.id')
+            ->select('addons.*', 'categories.category_name')
+            ->get()->toArray(); // Get ONLY the addons that BELONG TO the vendor
 
         } else { // if the $adminType is 'admin'
             $addons = \App\Models\Addon::get()->toArray();
@@ -86,8 +89,6 @@ class AddonsController extends Controller
             // dd($addon);
 
             $selCats = array();
-            $selBrands = array();
-            $selUsers = array();
 
             $message = 'Addon added successfully!';
 
@@ -98,8 +99,6 @@ class AddonsController extends Controller
             // dd($addon);
 
             $selCats = explode(',', $addon['categories']); // selected categories
-            $selBrands = explode(',', $addon['brands']);     // selected brands
-            $selUsers = explode(',', $addon['users']);      // selected users
 
             $message = 'Addon updated successfully!';
         }
@@ -114,23 +113,19 @@ class AddonsController extends Controller
             // Laravel's Validation    // Customizing Laravel's Validation Error Messages: https://laravel.com/docs/9.x/validation#customizing-the-error-messages    // Customizing Validation Rules: https://laravel.com/docs/9.x/validation#custom-validation-rules
             $rules = [
                 'categories' => 'required',
-                'brands' => 'required',
                 'addon_option' => 'required',
                 'addon_type' => 'required',
                 'amount_type' => 'required',
                 'amount' => 'required|numeric',
-                'expiry_date' => 'required'
             ];
 
             $customMessages = [ // Specifying A Custom Message For A Given Attribute: https://laravel.com/docs/9.x/validation#specifying-a-custom-message-for-a-given-attribute
                 'categories.required' => 'Select Categories',
-                'brands.required' => 'Select Brands',
                 'addon_option.required' => 'Select Addon Option',
                 'addon_type.required' => 'Select Addon Type',
                 'amount_type.required' => 'Select Amount Type',
                 'amount.required' => 'Enter Amount',
                 'amount.numeric' => 'Enter Valid Amount',
-                'expiry_date.required' => 'Enter Expiry Date',
             ];
 
             $this->validate($request, $rules, $customMessages);
@@ -141,18 +136,6 @@ class AddonsController extends Controller
                 $categories = implode(',', $data['categories']);
             } else {
                 $categories = '';
-            }
-
-            if (isset($data['brands'])) {
-                $brands = implode(',', $data['brands']);
-            } else {
-                $brands = '';
-            }
-
-            if (isset($data['users'])) {
-                $users = implode(',', $data['users']);
-            } else {
-                $users = '';
             }
 
 
@@ -176,15 +159,12 @@ class AddonsController extends Controller
             $addon->addon_option = $data['addon_option'];
             $addon->addon_code = $addon_code;
             $addon->categories = $categories;
-            $addon->brands = $brands;
-            $addon->users = $users;
             $addon->addon_type = $data['addon_type'];
             $addon->addon_name = $data['addon_name'];
             $addon->addon_detail = $data['addon_detail'];
             $addon->qty = $data['qty'];
             $addon->amount_type = $data['amount_type'];
             $addon->amount = $data['amount'];
-            $addon->expiry_date = $data['expiry_date'];
             $addon->status = 1;
 
             $addon->save();
@@ -208,7 +188,7 @@ class AddonsController extends Controller
         // dd($users);
 
 
-        return view('admin.addons.add_edit_addon')->with(compact('title', 'addon', 'categories', 'brands', 'users', 'selCats', 'selBrands', 'selUsers'));
+        return view('admin.addons.add_edit_addon')->with(compact('title', 'addon', 'categories', 'brands', 'users', 'selCats'));
     }
 
 }

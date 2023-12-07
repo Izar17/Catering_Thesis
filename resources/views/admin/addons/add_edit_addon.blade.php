@@ -141,31 +141,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-
-
-
-                                <div class="form-group">
-                                    <label for="brands">Select Brand:</label>
-                                    <select name="brands[]" class="form-control text-dark" multiple> {{-- "multiple" HTML attribute: https://www.w3schools.com/tags/att_multiple.asp --}} {{-- We used the Square Brackets [] in name="brands[]" is an array because we used the "multiple" HTML attribute to be able to choose multiple brands (more than one brand) at the same time --}}
-                                        @foreach ($brands as $brand)
-                                            <option value="{{ $brand['id'] }}" @if (in_array($brand['id'], $selBrands)) selected @endif>{{ $brand['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="users">Select User (by email):</label>
-                                    <select name="users[]" class="form-control text-dark" multiple> {{-- "multiple" HTML attribute: https://www.w3schools.com/tags/att_multiple.asp --}} {{-- We used the Square Brackets [] in name="users[]" is an array because we used the "multiple" HTML attribute to be able to choose multiple users (more than one user) at the same time --}}
-                                        @foreach ($users as $user)
-                                            <option value="{{ $user['email'] }}"  @if (in_array($user['email'], $selUsers)) selected @endif>{{ $user['email'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="expiry_date">Expiry Date:</label> {{-- Addon Expiry Date --}}
-                                    <input type="date" class="form-control" id="expiry_date" placeholder="Enter Expiry Date" name="expiry_date"  @if (isset($addon['expiry_date'])) value="{{ $addon['expiry_date'] }}" @else value="{{ old('expiry_date') }}" @endif>  {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div>
-
-
                                 <button type="submit" class="btn btn-primary mr-2">Submit</button>
                                 <button type="reset"  class="btn btn-light">Cancel</button>
                             </form>
