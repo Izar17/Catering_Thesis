@@ -504,7 +504,7 @@ class ProductsController extends Controller
         $vendor_id = \App\Models\Product::where('id', $id)->latest()->first()->vendor_id;
         $addOns = \App\Models\Addon::where('vendor_id', $vendor_id)->get(); // sum() the `stock` column of the `products_attributes` table    // sum(): https://laravel.com/docs/9.x/collections#method-sum
         //dd($vendor_id);
-        return view('front.products.detail')->with(compact('productDetails', 'categoryDetails', 'totalStock', 'similarProducts', 'recentlyViewedProducts', 'groupProducts', 'meta_title', 'meta_description', 'meta_keywords', 'ratings', 'avgRating', 'avgStarRating', 'ratingOneStarCount', 'ratingTwoStarCount', 'ratingThreeStarCount', 'ratingFourStarCount', 'ratingFiveStarCount','addOns'));
+        return view('front.products.detail')->with(compact('productDetails', 'categoryDetails', 'totalStock', 'similarProducts', 'recentlyViewedProducts', 'groupProducts', 'meta_title', 'meta_description', 'meta_keywords', 'ratings', 'avgRating', 'avgStarRating', 'ratingOneStarCount', 'ratingTwoStarCount', 'ratingThreeStarCount', 'ratingFourStarCount', 'ratingFiveStarCount', 'addOns'));
     }
 
 
@@ -569,10 +569,10 @@ class ProductsController extends Controller
 
 
             $eventDate = DB::table('orders_products')
-            ->where('product_id', $data['product_id'])
-            ->where('event_date', $data['event_date'])
-            ->where('event_time', $data['event_time'])
-            ->count(); // $data['pincode'] comes from the 'data' object sent from inside the $.ajax() method in front/js/custom.js file
+                ->where('product_id', $data['product_id'])
+                ->where('event_date', $data['event_date'])
+                ->where('event_time', $data['event_time'])
+                ->count(); // $data['pincode'] comes from the 'data' object sent from inside the $.ajax() method in front/js/custom.js file
 
 
             if ($eventDate > 0) {
@@ -641,7 +641,16 @@ class ProductsController extends Controller
                     $item->save();
                 }
 
-
+                foreach ($data as $addonData) {
+                    \DB::table('order_addons')->insert([
+                        'user_id' => $user_id,
+                        'addon_id' => $data['addon_id'][0],
+                        'product_id' => $data['product_id'],
+                        'qty' => $data['qty'][1],
+                        'amount' => str_replace('P', '', $data['totalAddons'][2]),
+                        // Add other fields as needed
+                    ]);
+                }
                 return redirect()->back()->with('success_message', 'Product has been added in Cart! <a href="/cart" style="text-decoration: underline !important">View Cart</a>');
 
             }
@@ -1290,10 +1299,10 @@ class ProductsController extends Controller
             $data = $request->all(); // Getting the name/value pairs array that are sent from the AJAX request (AJAX call)
 
             $eventDate = DB::table('orders')
-            ->where('product_id','=', $data['productId'])
-            ->where('orders.event_date', $data['eventDate'])
-            ->where('orders.event_time', $data['eventTime'])
-            ->count(); // $data['pincode'] comes from the 'data' object sent from inside the $.ajax() method in front/js/custom.js file
+                ->where('product_id', '=', $data['productId'])
+                ->where('orders.event_date', $data['eventDate'])
+                ->where('orders.event_time', $data['eventTime'])
+                ->count(); // $data['pincode'] comes from the 'data' object sent from inside the $.ajax() method in front/js/custom.js file
 
 
             if ($eventDate > 0) {

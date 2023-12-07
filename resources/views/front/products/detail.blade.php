@@ -362,14 +362,14 @@
                                             </tr>
                                             @foreach ($addOns as $addon)
                                                 <tr class="addon-row">
-                                                    <td><input type="hidden" value="{{ $addon->id }}"/></td>
+                                                    <td><input type="hidden" value="{{ $addon->id }}" name="addon_id[0]"/></td>
                                                     <td>{{ $addon->addon_code }}</td>
                                                     <td>{{ $addon->addon_name }}</td>
                                                     <td>{{ $addon->addon_detail }}</td>
                                                     <td>{{ $addon->qty }} pcs</td>
                                                     <td class="amount">P{{ $addon->amount }}</td>
-                                                    <td><input type="number" class="quantity" min="0" style="width:60px;" onchange="updateTotal(this)"/></td>
-                                                    <td><input type="text" class="total" id="total" style="width:60px;background-color:grey;" readonly/></td>
+                                                    <td><input type="number" name="qty[1]" class="quantity" min="0" style="width:60px;" onchange="updateTotal(this)"/></td>
+                                                    <td><input type="text" class="total"  name="totalAddons[2]" id="total" style="width:60px;background-color:grey;" readonly/></td>
                                                 </tr>
                                             @endforeach
                                         </table>
