@@ -1299,10 +1299,11 @@ class ProductsController extends Controller
             $data = $request->all(); // Getting the name/value pairs array that are sent from the AJAX request (AJAX call)
 
             $eventDate = DB::table('orders')
-                ->where('product_id', '=', $data['productId'])
-                ->where('orders.event_date', $data['eventDate'])
-                ->where('orders.event_time', $data['eventTime'])
-                ->count(); // $data['pincode'] comes from the 'data' object sent from inside the $.ajax() method in front/js/custom.js file
+            ->join('orders_products', 'orders.id', '=', 'orders_products.order_id')
+            ->where('orders_products.product_id', '=', $data['productId'])
+            ->where('orders.event_date', '=', $data['eventDate'])
+            ->where('orders.event_time', '=', $data['eventTime'])
+            ->count();
 
 
             if ($eventDate > 0) {
