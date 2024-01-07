@@ -187,7 +187,10 @@
                                         </div>
 
 
-
+                                        <div>
+                                            <input type="radio" class="radio-box" name="payment_gateway" id="gcash-payment" value="GCASH">
+                                            <label class="label-text" for="gcash-payment">GCash</label>
+                                        </div>
 
                                         <div class="u-s-m-b-13">
                                             <input type="checkbox" class="check-box" id="accept" name="accept" value="Yes" title="Please agree to T&C">

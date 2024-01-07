@@ -334,3 +334,6 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
     });
 
 });
+
+
+Addchat::routes();
